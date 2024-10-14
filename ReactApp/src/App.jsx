@@ -1,5 +1,7 @@
-function App() {
-  return "Hi";
-}
+import { ClassComponent } from "./ClassComponent";
+import { FunctionComponent } from "./FunctionComponent";
 
-export default App;
+export default function App() {
+  //   return <FunctionComponent />;
+  return <ClassComponent />;
+}
