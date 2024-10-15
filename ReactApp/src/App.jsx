@@ -1,55 +1,66 @@
-import { useEffect, useState } from "react";
-import { User } from "./User";
+import { useState } from "react";
+import "./styles.css";
+import { TodoList } from "./TodoList";
 
-export default function App() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+function App() {
+  const [newTodoName, setNewTodoName] = useState("");
+  const [todos, setTodos] = useState([]);
 
-  const [error, setError] = useState();
+  function addNewTodo() {
+    if (newTodoName === "") return;
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("https://jsonplaceholder.typicode.com/users", {
-      signal: controller.signal,
-    })
-      .then((res) => {
-        if (res.status == 200) {
-          return res.json();
-        } else {
-          return Promise.reject(res);
-        }
-      })
-      .then((data) => {
-        console.log("Here");
-        console.log(loading);
-        setUsers(data);
-      })
-      .catch((e) => {
-        if (e?.name === "AbortError") return;
-        setError(e);
-      })
+    setTodos((currentTodos) => {
+      return [
+        ...currentTodos,
+        { name: newTodoName, completed: false, id: crypto.randomUUID() },
+      ];
+    });
+    setNewTodoName("");
+  }
 
-      .finally(() => {
-        setLoading(false);
+  function toggleTodo(todoId, completed) {
+    setTodos((currentTodos) => {
+      return currentTodos.map((todo) => {
+        if (todo.id === todoId) return { ...todo, completed };
+
+        return todo;
       });
+    });
+  }
 
-    return () => {
-      controller.abort();
-    };
-  }, []);
+  function deleteTodo(todoId) {
+    setTodos((currentTodos) => {
+      return currentTodos.filter((todo) => todo.id !== todoId);
+    });
+  }
 
   return (
     <>
-      <h1>User List</h1>
-      {loading ? (
-        <h2>Loading...</h2>
-      ) : (
-        <ul>
-          {users.map((user) => {
-            return <User key={user.id} name={user.name} />;
-          })}
-        </ul>
-      )}
+      <ul id="list">
+        {todos.map((todo) => {
+          return (
+            <TodoList
+              key={todo.id}
+              {...todo}
+              toggleTodo={toggleTodo}
+              deleteTodo={deleteTodo}
+            />
+          );
+        })}
+      </ul>
+
+      <div id="new-todo-form">
+        <label htmlFor="todo-input">New Todo</label>
+        <input
+          type="text"
+          id="todo-input"
+          value={newTodoName}
+          onChange={(e) => setNewTodoName(e.target.value)}
+        />
+        <button onClick={addNewTodo}>Add Todo</button>
+      </div>
     </>
   );
 }
+
+export default App;
