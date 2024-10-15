@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Child } from "./Child";
+import { FetchingApi } from "./FetchingApi";
 
 export default function App() {
   const [show, setShow] = useState(true);
@@ -8,10 +9,11 @@ export default function App() {
 
   return (
     <div>
-      <button onClick={() => setShow((currentShow) => !currentShow)}>
+      {/* <button onClick={() => setShow((currentShow) => !currentShow)}>
         Show/Hide
       </button>
-      {childComponent}
+      {childComponent} */}
+      <FetchingApi />
     </div>
   );
 }
