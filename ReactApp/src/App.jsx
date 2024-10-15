@@ -1,7 +1,17 @@
-import { ClassComponent } from "./ClassComponent";
-import { FunctionComponent } from "./FunctionComponent";
+import { useState } from "react";
+import { Child } from "./Child";
 
 export default function App() {
-  //   return <FunctionComponent />;
-  return <ClassComponent />;
+  const [show, setShow] = useState(true);
+
+  const childComponent = show ? <Child /> : null;
+
+  return (
+    <div>
+      <button onClick={() => setShow((currentShow) => !currentShow)}>
+        Show/Hide
+      </button>
+      {childComponent}
+    </div>
+  );
 }
