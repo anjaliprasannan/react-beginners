@@ -1,64 +1,59 @@
 import { useState } from "react";
-import "./styles.css";
-import { TodoList } from "./TodoList";
+import { useFetch } from "./useFetch";
+
+// If the API does not work use these local URLs
+// const URLS = {
+//   USERS: "users.json",
+//   POSTS: "posts.json",
+//   COMMENTS: "comments.json",
+// }
+
+const URLS = {
+  USERS: "https://jsonplaceholder.typicode.com/users",
+  POSTS: "https://jsonplaceholder.typicode.com/posts",
+  COMMENTS: "https://jsonplaceholder.typicode.com/comments",
+};
 
 function App() {
-  const [newTodoName, setNewTodoName] = useState("");
-  const [todos, setTodos] = useState([]);
+  const [url, setUrl] = useState(URLS.USERS);
 
-  function addNewTodo() {
-    if (newTodoName === "") return;
-
-    setTodos((currentTodos) => {
-      return [
-        ...currentTodos,
-        { name: newTodoName, completed: false, id: crypto.randomUUID() },
-      ];
-    });
-    setNewTodoName("");
-  }
-
-  function toggleTodo(todoId, completed) {
-    setTodos((currentTodos) => {
-      return currentTodos.map((todo) => {
-        if (todo.id === todoId) return { ...todo, completed };
-
-        return todo;
-      });
-    });
-  }
-
-  function deleteTodo(todoId) {
-    setTodos((currentTodos) => {
-      return currentTodos.filter((todo) => todo.id !== todoId);
-    });
-  }
+  const { data, isLoading, isError } = useFetch(url);
 
   return (
     <>
-      <ul id="list">
-        {todos.map((todo) => {
-          return (
-            <TodoList
-              key={todo.id}
-              {...todo}
-              toggleTodo={toggleTodo}
-              deleteTodo={deleteTodo}
-            />
-          );
-        })}
-      </ul>
-
-      <div id="new-todo-form">
-        <label htmlFor="todo-input">New Todo</label>
-        <input
-          type="text"
-          id="todo-input"
-          value={newTodoName}
-          onChange={(e) => setNewTodoName(e.target.value)}
-        />
-        <button onClick={addNewTodo}>Add Todo</button>
+      <div>
+        <label>
+          <input
+            type="radio"
+            checked={url === URLS.USERS}
+            onChange={() => setUrl(URLS.USERS)}
+          />
+          Users
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={url === URLS.POSTS}
+            onChange={() => setUrl(URLS.POSTS)}
+          />
+          Posts
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={url === URLS.COMMENTS}
+            onChange={() => setUrl(URLS.COMMENTS)}
+          />
+          Comments
+        </label>
       </div>
+      {isLoading ? (
+        <h1>Loading...</h1>
+      ) : isError ? (
+        <h1>Error</h1>
+      ) : (
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      )}
     </>
   );
 }
