@@ -1,5 +1,6 @@
-function App() {
-  return "Hi";
-}
+import { StateForm } from "./StateForm"
+import "./styles.css"
 
-export default App;
+export default function App() {
+  return <StateForm />
+}
